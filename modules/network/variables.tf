@@ -26,12 +26,10 @@ variable "nsgname" {
 variable "subnet_main_name" {
   description = "The name of the main subnet."
   type        = string
-  default     = local.subnet_main_name
 }
 
 # Web App Subnet name
 variable "subnet_webapp_name" {
   description = "The name of the web app subnet."
   type        = string
-  default     = local.subnet_webapp_name
 }
