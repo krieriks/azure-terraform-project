@@ -3,6 +3,7 @@ variable "subscription_id" {
   type        = string
 }
 
+# Resource group variables
 variable "rg_main_name" {
   description = "The name of the main resource group."
   type        = string
@@ -13,6 +14,7 @@ variable "location" {
   type        = string
 }
 
+# Network variables
 variable "vnetname" {
   description = "The name of the virtual network."
   type        = string
@@ -27,3 +29,4 @@ variable "nsgname" {
   description = "The name of the network security group."
   type        = string
 }
+

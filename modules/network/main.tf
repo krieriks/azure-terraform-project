@@ -1,5 +1,6 @@
+# Network Security Group
 resource "azurerm_network_security_group" "nsg" {
-  name                = var.nsgname
+  name                = local.nsg_name
   location            = var.location
   resource_group_name = var.rgname
 
@@ -28,26 +29,29 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
+# Virtual Network
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnetname
+  name                = local.vnet_name
   location            = var.location
   resource_group_name = var.rgname
   address_space       = ["10.0.0.0/16"]
 
   tags = {
-    environment = "OperaTerrake"
+    environment = terraform.workspace
   }
 }
 
+# Main Subnet
 resource "azurerm_subnet" "main" {
-  name                 = "${"main-"}${var.subnetname}"
+  name                 = local.subnet_main_name
   resource_group_name  = var.rgname
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+# Web App Subnet
 resource "azurerm_subnet" "webapp" {
-  name                 = "${"webapp-"}${var.subnetname}"
+  name                 = local.subnet_webapp_name
   resource_group_name  = var.rgname
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.2.0/24"]

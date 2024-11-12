@@ -5,10 +5,11 @@ terraform {
       version = "4.0.1"
     }
   }
+
   backend "azurerm" {
-    resource_group_name  = "rg-OperaTerra-ke"
-    storage_account_name = "saoperaterrabackendke"
-    container_name       = "scoperaterrabackendke"
-    key                  = "backend.operaterra.tfstate"
+    resource_group_name  = "rg-OperaTerra-global"           # Global resource group
+    storage_account_name = "saoperaterraglobal"             # Global storage account
+    container_name       = "scoperaterraglobal"             # Global container
+    key                  = "backend.operaterra.${terraform.workspace}.tfstate"  # Separate state per workspace
   }
 }
