@@ -1,22 +1,13 @@
-variable "rg_backend_name" {
-  description = "The name of the resource group in which to create the resources."
-  type        = string
-}
-
 variable "rg_backend_location" {
-  description = "The location/region where the resource group will be created."
+  description = "The location/region for global resources."
   type        = string
   default     = "West Europe"
 }
 
-variable "sa_backend_name" {
-  description = "The name of the storage account to create."
+variable "prefix" {
+  description = "Prefix for naming global resources."
   type        = string
-}
-
-variable "sc_backend_name" {
-  description = "The name of the storage container to create."
-  type        = string
+  default     = "keoperaterra"
 }
 
 variable "subscription_id" {
