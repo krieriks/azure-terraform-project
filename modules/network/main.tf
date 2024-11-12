@@ -27,6 +27,10 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  tags = {
+    environment = terraform.workspace
+  }
 }
 
 # Virtual Network

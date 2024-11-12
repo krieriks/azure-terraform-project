@@ -1,40 +1,31 @@
-variable "db_server_name" {
-  description = "The name of the Azure SQL Server"
-  type        = string
-}
-
-variable "db_name" {
-  description = "The name of the Azure SQL Database"
-  type        = string
-}
-
-variable "administrator_login" {
-  description = "The administrator login for the Azure SQL Server"
-  type        = string
-}
-
-variable "administrator_login_password" {
-  description = "The administrator login password for the Azure SQL Server"
-  type        = string
-  sensitive = true
-}
-
-variable "saa_key" {
-  description = "The storage account access key"
-  type        = string
-}
-
-variable "storage_endpoint" {
-  description = "The storage account endpoint"
-  type        = string
-}
-
-variable "rg_name" {
-  description = "The name of the resource group"
-  type        = string
-}
-
+# Location for the database resources
 variable "location" {
-  description = "The location/region where the resources will be created"
+  description = "The Azure region in which to deploy the database resources."
   type        = string
+}
+
+# Resource Group
+variable "rgname" {
+  description = "The name of the resource group where the database resources will be deployed."
+  type        = string
+}
+
+# Admin Username
+variable "admin_username" {
+  description = "The administrator username for the SQL Server."
+  type        = string
+}
+
+# Admin Password
+variable "admin_password" {
+  description = "The administrator password for the SQL Server."
+  type        = string
+  sensitive   = true
+}
+
+# Optional Subnet ID for VNet Integration
+variable "subnet_id" {
+  description = "The ID of the subnet to connect the SQL Server for private access (optional)."
+  type        = string
+  default     = null
 }

@@ -1,4 +1,4 @@
 locals {
-  prefix      = "operaterra"
-  environment = var.environment
+  prefix      = "keoperaterra"
+  environment = terraform.workspace
 }

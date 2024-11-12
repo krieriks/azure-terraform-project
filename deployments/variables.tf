@@ -30,3 +30,14 @@ variable "nsgname" {
   type        = string
 }
 
+# Database credentials
+variable "db_admin_username" {
+  description = "The admin username for the database."
+  type        = string
+}
+
+variable "db_admin_password" {
+  description = "The admin password for the database."
+  type        = string
+  sensitive   = true
+}

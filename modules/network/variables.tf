@@ -1,30 +1,37 @@
-# Location
+# Location of the resources
 variable "location" {
-  description = "The Azure Region in which all resources in this example should be created."
+  description = "The Azure Region for the network resources."
   type        = string
-  default     = "West Europe"
 }
 
-# Resource Group
+# Resource Group for the network
 variable "rgname" {
-  description = "The name of the Resource Group in which all resources in this example should be created."
+  description = "The name of the Resource Group where network resources will be deployed."
   type        = string
 }
 
-# Virtual Network
+# Virtual Network name
 variable "vnetname" {
   description = "The name of the Virtual Network."
   type        = string
 }
 
-# Subnet
-variable "subnetname" {
-  description = "The name of the Subnet."
-  type        = string
-}
-
-# Network Security Group
+# Network Security Group name
 variable "nsgname" {
   description = "The name of the Network Security Group."
   type        = string
+}
+
+# Main Subnet name
+variable "subnet_main_name" {
+  description = "The name of the main subnet."
+  type        = string
+  default     = local.subnet_main_name
+}
+
+# Web App Subnet name
+variable "subnet_webapp_name" {
+  description = "The name of the web app subnet."
+  type        = string
+  default     = local.subnet_webapp_name
 }

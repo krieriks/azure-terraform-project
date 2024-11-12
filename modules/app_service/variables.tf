@@ -1,39 +1,17 @@
-variable "sp_name" {
-  description = "The name of the service plan"
-  type        = string
-}
-
-variable "rg_name" {
-  description = "The name of the resource group"
-  type        = string
-}
-
+# Location
 variable "location" {
-  description = "The location of the resource group"
+  description = "The Azure region in which to deploy the app service."
   type        = string
 }
 
-variable "worker_count" {
-  description = "The number of workers"
-  type        = number
-}
-
-variable "lwa_name" {
-  description = "The name of the linux web app"
+# Resource Group
+variable "rgname" {
+  description = "The name of the resource group in which to create the app service resources."
   type        = string
 }
 
-variable "sa_name" {
-  description = "The name of the storage account"
-  type        = string
-}
-
-variable "saa_key" {
-  description = "The access key of the storage account"
-  type        = string
-}   
-
-variable "sa_share_name" {
-  description = "The name of the storage account share"
+# Subnet ID for VNet Integration
+variable "subnet_id" {
+  description = "The ID of the subnet for the App Service to connect to (optional for private access)."
   type        = string
 }
