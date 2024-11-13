@@ -1,26 +1,33 @@
-name: Deploy to Staging
+name: Deploy Infrastructure to Staging
 
 on:
   push:
     branches:
-      - staging
+      - 'staging'
+    paths:
+      - 'deployments/**'
 
 jobs:
-  terraform-deploy:
+  terraform:
     runs-on: ubuntu-22.04
     env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       WORKING_DIR: ./deployments
-    steps:
-      - uses: actions/checkout@v4.1.1
 
-      - name: Terraform Init
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Terraform init
         run: terraform init -backend-config="key=staging.tfstate"
         working-directory: ${{ env.WORKING_DIR }}
 
-      - name: Terraform Plan
-        run: terraform plan -var-file="deployments/terraform.tfvars.staging"
+      - name: Terraform plan
+        run: terraform plan -var-file="terraform.tfvars.staging"
         working-directory: ${{ env.WORKING_DIR }}
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file="deployments/terraform.tfvars.staging"
+      - name: Terraform apply
+        run: terraform apply -auto-approve -var-file="terraform.tfvars.staging"
         working-directory: ${{ env.WORKING_DIR }}
