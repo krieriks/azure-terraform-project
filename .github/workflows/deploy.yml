@@ -34,7 +34,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIR }}
       
       - name: Terraform apply or destroy dev
-        run: terraform ${{ github.event.inputs.action_type }} -var-file="${{ env.WORKING_DIR }}/terraform.tfvars.dev" -auto-approve
+        run: terraform apply -var-file="${{ env.WORKING_DIR }}/terraform.tfvars.dev" -auto-approve
         working-directory: ${{ env.WORKING_DIR }}
 
   stage_prod:
