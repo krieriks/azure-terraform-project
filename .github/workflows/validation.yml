@@ -1,7 +1,7 @@
 name: Terraform Testing
 
 on:
-  push:
+  pull_request:
     branches:
       - dev
       - staging
