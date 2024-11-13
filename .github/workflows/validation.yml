@@ -1,9 +1,8 @@
 name: Terraform Validation
 on:
   push:
-    
     paths:
-      - ./**
+      - '**'
 jobs:
   terraform:
     name: 'Validate'
