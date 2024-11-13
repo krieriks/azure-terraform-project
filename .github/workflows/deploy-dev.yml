@@ -9,7 +9,7 @@ jobs:
   terraform-deploy:
     runs-on: ubuntu-22.04
     env:
-      WORKING_DIR: ./course materials/module07/demo-infra
+      WORKING_DIR: ./deployments
     steps:
       - uses: actions/checkout@v4.1.1
 
