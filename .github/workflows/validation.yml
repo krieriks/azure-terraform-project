@@ -16,7 +16,7 @@ jobs:
       WORKING_dir: ./deployments
 
     steps:
-      - uses: actions/checkout@4.1.1
+      - uses: actions/checkout@v3
 
       - name: Terraform init
         id: init
