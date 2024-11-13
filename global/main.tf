@@ -1,3 +1,4 @@
+# Create a storage account and container for the backend
 resource "azurerm_resource_group" "rg_backend" {
   name     = "${local.prefix}-rg-backend"
   location = local.location

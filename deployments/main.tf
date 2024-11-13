@@ -30,7 +30,7 @@ module "database" {
   location       = var.location
   rgname         = azurerm_resource_group.main.name
   admin_username = var.db_admin_username
-  subnet_id      = module.network.main_subnet_id  # Pass subnet for VNet integration if needed
+  subnet_id      = module.network.main_subnet_id
 }
 
 
