@@ -1,4 +1,4 @@
-
+# Define local variables for the storage module
 locals {
   prefix               = "keoperaterra"
   environment_suffix   = terraform.workspace == "dev" ? "dev" : terraform.workspace == "staging" ? "stg" : "prod"
