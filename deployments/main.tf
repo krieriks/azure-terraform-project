@@ -1,4 +1,4 @@
-# Resource group for the main resources
+# Resource group for the main resources of the Operaterra backend
 resource "azurerm_resource_group" "main" {
   name     = "${local.prefix}-rg-${local.environment}"
   location = var.location
