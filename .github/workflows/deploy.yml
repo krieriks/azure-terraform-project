@@ -1,58 +1,74 @@
-name: Terraform Deployment
+name: Terraform Deploy
 
 on:
   push:
-    branches:
-      - dev
-      - staging
-      - prod
+    paths:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      action_type:
+        description: 'What to do? (apply/destroy)'
+        required: true
+        default: 'apply'
+
+env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  WORKING_DIR: ./deployments
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}  # Sets environment to branch name (dev, staging, prod)
-
+  dev_stage:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
+      
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Terraform workspace select or create dev
+        run: terraform workspace select dev || terraform workspace new dev
+        working-directory: ${{ env.WORKING_DIR }}
+      
+      - name: Terraform apply or destroy dev
+        run: terraform apply ${{ github.event.inputs.action_type }} -var-file="terraform.tfvars.dev" -auto-approve
+        working-directory: ${{ env.WORKING_DIR }}
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.1.9
+  stage_prod:
+    needs: dev_stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
+        
+      - name: Terraform workspace select or create staging
+        run: terraform workspace select staging || terraform workspace new staging
+        working-directory: ${{ env.WORKING_DIR }}
+      
+      - name: Terraform apply or destroy staging
+        run: terraform apply ${{ github.event.inputs.action_type }} -var-file="terraform.tfvars.staging" -auto-approve
+        working-directory: ${{ env.WORKING_DIR }}
 
-      - name: Configure Azure credentials
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  prod:
+    needs: stage_prod
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
 
-      - name: Terraform Init
-        run: terraform init -backend-config="key=backend.operaterra.${{ github.ref_name }}.tfstate"
-        working-directory: ./deployments
-
-      - name: Terraform Workspace Select or Create
-        run: terraform workspace select ${{ github.ref_name }} || terraform workspace new ${{ github.ref_name }}
-        working-directory: ./deployments
-
-      - name: Terraform Plan
-        run: terraform plan -var-file="terraform.tfvars.${{ github.ref_name }}"
-        working-directory: ./deployments
-
-      - name: Terraform Apply
-        if: github.ref_name != 'prod'
-        run: terraform apply -auto-approve -var-file="terraform.tfvars.${{ github.ref_name }}"
-        working-directory: ./deployments
-
-      - name: Manual Approval for Production
-        if: github.ref_name == 'prod'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          event-type: prod-approval-needed
-
-      - name: Terraform Apply (Production)
-        if: github.ref_name == 'prod' && github.event.client_payload.action == 'prod-approval-granted'
-        run: terraform apply -auto-approve -var-file="terraform.tfvars.prod"
-        working-directory: ./deployments
+      - name: Terraform apply or destroy prod
+        run: terraform apply ${{ github.event.inputs.action_type }} -var-file="terraform.tfvars.prod" -auto-approve
+        working-directory: ${{ env.WORKING_DIR }}
