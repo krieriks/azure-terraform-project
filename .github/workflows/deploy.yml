@@ -33,14 +33,9 @@ jobs:
         run: terraform workspace select dev || terraform workspace new dev
         working-directory: ${{ env.WORKING_DIR }}
       
-      - name: Terraform plan dev
-        id: plan
-        run: terraform plan -out=dev.tfplan
-        working-directory: ${{ env.WORKING_DIR }}
-
-      - name: Terraform apply dev
-        id: apply
-        run: terraform apply -auto-approve dev.tfplan
+      - name: Terraform Apply dev
+        if: github.event.inputs.action_type != 'destroy'
+        run: terraform apply -auto-approve -var="subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}"
         working-directory: ${{ env.WORKING_DIR }}
 
   stage_prod:
