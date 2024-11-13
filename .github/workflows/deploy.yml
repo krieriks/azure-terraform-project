@@ -53,6 +53,6 @@ jobs:
           event-type: prod-approval-needed
 
       - name: Terraform Apply (Production)
-        if: github.ref_name == 'prod' && github.event.action == 'prod-approval-granted'
+        if: github.ref_name == 'prod' && github.event.client_payload.action == 'prod-approval-granted'
         run: terraform apply -auto-approve -var-file="terraform.tfvars.prod"
         working-directory: ./deployments
