@@ -1,3 +1,4 @@
+# Terraform configuration file for the Operaterra backend
 terraform {
   required_providers {
     azurerm = {
