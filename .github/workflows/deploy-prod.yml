@@ -1,4 +1,4 @@
-name: Deploy Infrastructure to Staging
+name: Deploy Infrastructure to Prod
 
 on:
   push:
