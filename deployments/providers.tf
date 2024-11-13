@@ -1,3 +1,4 @@
+# Provider configuration for AzureRM
 provider "azurerm" {
   features {
     key_vault {
