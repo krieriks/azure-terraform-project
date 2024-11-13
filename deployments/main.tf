@@ -1,3 +1,4 @@
+# Resource group for the environment
 resource "azurerm_resource_group" "main" {
   name     = "${local.prefix}-rg-${local.environment}"
   location = var.location
