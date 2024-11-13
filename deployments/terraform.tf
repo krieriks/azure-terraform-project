@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "rg-OperaTerra-global"           
-    storage_account_name = "saoperaterraglobal"             
-    container_name       = "scoperaterraglobal"             
-    key                  = "backend.operaterra.${terraform.workspace}.tfstate"  
-}
+    resource_group_name  = "keoperaterra-rg-backend"         
+    storage_account_name = "keoperaterrasabackend"            
+    container_name       = "keoperaterrasc-backend"           
+    key                  = "backend.operaterra.tfstate"       
+  }
 }
