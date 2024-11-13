@@ -1,8 +1,7 @@
 name: Terraform Validation
 on:
   push:
-    branches-ignore:
-      - 'main'
+    
     paths:
       - '**'
 jobs:
