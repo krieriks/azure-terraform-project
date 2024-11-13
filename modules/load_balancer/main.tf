@@ -3,7 +3,7 @@ resource "azurerm_lb" "load_balancer" {
   name                = local.load_balancer_name
   location            = var.location
   resource_group_name = var.rgname
-  sku                 = terraform.workspace == "prod" ? "Standard" : "Basic" # Standard for prod, Basic for dev/staging
+  sku                 = terraform.workspace == "prod" ? "Standard" : "Basic"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
@@ -43,3 +43,4 @@ resource "azurerm_lb_rule" "lb_rule" {
   idle_timeout_in_minutes        = 4
   enable_floating_ip             = false
 }
+

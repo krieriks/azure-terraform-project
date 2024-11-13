@@ -29,7 +29,6 @@ module "database" {
   location       = var.location
   rgname         = azurerm_resource_group.main.name
   admin_username = var.db_admin_username
-  admin_password = var.db_admin_password
   subnet_id      = module.network.main_subnet_id  # Pass subnet for VNet integration if needed
 }
 
@@ -41,9 +40,19 @@ module "storage" {
   rgname              = azurerm_resource_group.main.name
 }
 
+# Public IP for the Load Balancer
+resource "azurerm_public_ip" "lb_public_ip" {
+  name                = "${local.prefix}-lb-ip-${local.environment}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+  sku                 = terraform.workspace == "prod" ? "Standard" : "Basic"
+}
+
+# Load balancer module
 module "load_balancer" {
   source      = "../modules/load_balancer"
   location    = var.location
   rgname      = azurerm_resource_group.main.name
-  public_ip_id = azurerm_public_ip.lb_public_ip.id  # Pass the ID of the public IP assigned to the LB
+  public_ip_id = azurerm_public_ip.lb_public_ip.id
 }

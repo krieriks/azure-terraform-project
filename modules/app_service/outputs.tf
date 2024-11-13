@@ -5,7 +5,7 @@ output "app_service_id" {
 
 output "app_service_default_hostname" {
   description = "The default hostname of the App Service."
-  value       = azurerm_app_service.app.default_hostname
+  value       = azurerm_app_service.app.default_site_hostname
 }
 
 output "app_service_plan_id" {

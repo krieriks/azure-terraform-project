@@ -16,12 +16,6 @@ variable "admin_username" {
   type        = string
 }
 
-# Admin Password
-variable "admin_password" {
-  description = "The administrator password for the SQL Server."
-  type        = string
-  sensitive   = true
-}
 
 # Optional Subnet ID for VNet Integration
 variable "subnet_id" {

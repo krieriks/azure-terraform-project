@@ -20,8 +20,13 @@ variable "vnetname" {
   type        = string
 }
 
-variable "subnetname" {
-  description = "The name of the subnet."
+variable "subnet_main_name" {
+  description = "The name of the main subnet."
+  type        = string
+}
+
+variable "subnet_webapp_name" {
+  description = "The name of the web app subnet."
   type        = string
 }
 
@@ -34,10 +39,4 @@ variable "nsgname" {
 variable "db_admin_username" {
   description = "The admin username for the database."
   type        = string
-}
-
-variable "db_admin_password" {
-  description = "The admin password for the database."
-  type        = string
-  sensitive   = true
 }

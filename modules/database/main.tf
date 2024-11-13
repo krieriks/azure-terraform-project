@@ -1,10 +1,18 @@
+# Random password generation
+resource "random_password" "random_password" {
+  length           = 16
+  special          = true
+  override_special = "!@#$%&*()-_=+[]{}|;:,.<>"
+}
+
+
 # SQL Server
 resource "azurerm_mssql_server" "sql_server" {
   name                         = local.database_server_name
   location                     = var.location
   resource_group_name          = var.rgname
   administrator_login          = var.admin_username
-  administrator_login_password = var.admin_password
+  administrator_login_password = random_password.random_password.result
   version                      = "12.0"
 
   tags = {

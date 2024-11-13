@@ -13,8 +13,15 @@ output "sql_server_fqdn" {
   value       = azurerm_mssql_server.sql_server.fully_qualified_domain_name
 }
 
+output "sql_server_admin_password" {
+  description = "The administrator password for the SQL Server"
+  value       = random_password.random_password.result
+  sensitive   = true
+}
+
+
 output "database_connection_string" {
   description = "The connection string for the SQL Database."
-  value       = "Server=${azurerm_mssql_server.sql_server.fully_qualified_domain_name};Database=${azurerm_mssql_database.database.name};User Id=${var.admin_username};Password=${var.admin_password};"
+  value       = "Server=${azurerm_mssql_server.sql_server.fully_qualified_domain_name};Database=${azurerm_mssql_database.database.name};User Id=${var.admin_username};Password=${random_password.random_password.result};"
   sensitive   = true
 }
