@@ -26,7 +26,7 @@ resource "azurerm_lb_probe" "health_probe" {
   name                = local.probe_name
   loadbalancer_id     = azurerm_lb.load_balancer.id
   protocol            = "Tcp"
-  port                = 80 # Port to check health, adjust if needed
+  port                = 80
   interval_in_seconds = 15
   number_of_probes    = 3
 }
