@@ -6,6 +6,7 @@ output "storage_account_name" {
   value       = azurerm_storage_account.storage_account.name
 }
 
+# Output for the storage module
 output "container_name" {
   description = "The name of the blob storage container."
   value       = azurerm_storage_container.container.name
