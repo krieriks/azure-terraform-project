@@ -1,72 +1,58 @@
-name: Terraform Deploy
+name: Terraform Deployment
 
 on:
   push:
-    paths:
-      - '**'
-  workflow_dispatch:
-
-env:
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  WORKING_DIR: ./deployments
+    branches:
+      - dev
+      - staging
+      - prod
 
 jobs:
-  dev_stage:
-    runs-on: ubuntu-22.04
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}  # Sets environment to branch name (dev, staging, prod)
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Terraform init
-        run: terraform init
-        working-directory: ${{ env.WORKING_DIR }}
-        
-      - name: Terraform workspace select or create dev
-        run: terraform workspace select dev || terraform workspace new dev
-        working-directory: ${{ env.WORKING_DIR }}
-      
-      - name: Terraform apply dev
-        run: terraform apply -auto-approve
-        working-directory: ${{ env.WORKING_DIR }}
 
-  stage_prod:
-    needs: dev_stage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      
-      - name: Terraform init
-        run: terraform init
-        working-directory: ${{ env.WORKING_DIR }}
-        
-      - name: Terraform workspace select or create stage
-        run: terraform workspace select stage || terraform workspace new stage
-        working-directory: ${{ env.WORKING_DIR }}
-      
-      - name: Terraform apply stage
-        run: terraform apply -auto-approve
-        working-directory: ${{ env.WORKING_DIR }}
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.9
 
+      - name: Configure Azure credentials
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-  prod:
-    needs: stage_prod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      
-      - name: Terraform init
-        run: terraform init
-        working-directory: ${{ env.WORKING_DIR }}
-        
-      - name: Terraform workspace select or create prod
-        run: terraform workspace select prod || terraform workspace new prod
-        working-directory: ${{ env.WORKING_DIR }}
-      
-      - name: Terraform apply prod
-        run: terraform apply -auto-approve
-        working-directory: ${{ env.WORKING_DIR }}
+      - name: Terraform Init
+        run: terraform init -backend-config="key=backend.operaterra.${{ github.ref_name }}.tfstate"
+        working-directory: ./deployments
+
+      - name: Terraform Workspace Select or Create
+        run: terraform workspace select ${{ github.ref_name }} || terraform workspace new ${{ github.ref_name }}
+        working-directory: ./deployments
+
+      - name: Terraform Plan
+        run: terraform plan -var-file="terraform.tfvars.${{ github.ref_name }}"
+        working-directory: ./deployments
+
+      - name: Terraform Apply
+        if: github.ref_name != 'prod'
+        run: terraform apply -auto-approve -var-file="terraform.tfvars.${{ github.ref_name }}"
+        working-directory: ./deployments
+
+      - name: Manual Approval for Production
+        if: github.ref_name == 'prod'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: prod-approval-needed
+
+      - name: Terraform Apply (Production)
+        if: github.ref_name == 'prod' && github.event.action == 'prod-approval-granted'
+        run: terraform apply -auto-approve -var-file="terraform.tfvars.prod"
+        working-directory: ./deployments
