@@ -6,7 +6,7 @@ terraform {
       version = "4.0.1"
     }
   }
-
+ # Backend configuration
   backend "azurerm" {
     resource_group_name  = "keoperaterra-rg-backend"         
     storage_account_name = "keoperaterrasabackend"            
