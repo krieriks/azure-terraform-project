@@ -1,0 +1,26 @@
+name: Validate Infrastructure
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - staging
+      - prod
+  workflow_dispatch:
+
+jobs:
+  terraform-validate:
+    runs-on: ubuntu-22.04
+    env:
+      WORKING_DIR: ./course materials/module07/demo-infra
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIR }}
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ${{ env.WORKING_DIR }}
