@@ -5,6 +5,11 @@ on:
     paths:
       - '**'
   workflow_dispatch:
+    inputs:
+      action_type:
+        description: 'What to do? (apply/destroy)'
+        required: true
+        default: 'apply'
 
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -28,8 +33,8 @@ jobs:
         run: terraform workspace select dev || terraform workspace new dev
         working-directory: ${{ env.WORKING_DIR }}
       
-      - name: Terraform apply dev
-        run: terraform apply -auto-approve
+      - name: Terraform apply or destroy dev
+        run: terraform ${{ github.event.inputs.action_type }} -var-file="terraform.tfvars.dev" -auto-approve
         working-directory: ${{ env.WORKING_DIR }}
 
   stage_prod:
@@ -37,36 +42,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v3
       
       - name: Terraform init
         run: terraform init
         working-directory: ${{ env.WORKING_DIR }}
         
-      - name: Terraform workspace select or create stage
-        run: terraform workspace select stage || terraform workspace new stage
+      - name: Terraform workspace select or create staging
+        run: terraform workspace select staging || terraform workspace new staging
         working-directory: ${{ env.WORKING_DIR }}
       
-      - name: Terraform apply stage
-        run: terraform apply -auto-approve
+      - name: Terraform apply or destroy staging
+        run: terraform ${{ github.event.inputs.action_type }} -var-file="terraform.tfvars.staging" -auto-approve
         working-directory: ${{ env.WORKING_DIR }}
-
 
   prod:
     needs: stage_prod
     runs-on: ubuntu-latest
+    environment:
+      name: prod
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v3
       
       - name: Terraform init
         run: terraform init
-        working-directory: ${{ env.WORKING_DIR }}
-        
-      - name: Terraform workspace select or create prod
-        run: terraform workspace select prod || terraform workspace new prod
-        working-directory: ${{ env.WORKING_DIR }}
-      
-      - name: Terraform apply prod
-        run: terraform apply -auto-approve
         working-directory: ${{ env.WORKING_DIR }}
